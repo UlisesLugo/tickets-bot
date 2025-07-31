@@ -1,9 +1,15 @@
+//
+//  ContentView.swift
+//  auto-ticketing
+//
+//  Created by Ulises Lugo Fletes on 31/07/25.
+//
+
 import SwiftUI
-import AVFoundation
+import AudioToolbox
 
 struct ContentView: View {
     @State private var timeRemaining: TimeInterval = 0
-    @State private var audioPlayer: AVAudioPlayer?
     @State private var timer: Timer?
     @State private var isTimerRunning = false
     
@@ -76,17 +82,7 @@ struct ContentView: View {
     }
 
     private func playAlarm() {
-        guard let soundURL = Bundle.main.url(forResource: "alarm", withExtension: "mp3") else {
-            print("Alarm sound file not found.")
-            return
-        }
-
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-            audioPlayer?.play()
-        } catch {
-            print("Failed to play alarm sound: \(error.localizedDescription)")
-        }
+        AudioServicesPlaySystemSound(1005)
     }
 }
 
@@ -95,3 +91,4 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
