@@ -1,0 +1,6 @@
+services:
+  tickets-bot-backend:
+    build:
+      context: ./backend
+    volumes:
+      - ./backend:/app

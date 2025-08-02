@@ -1,6 +1,7 @@
 
 import requests
 import time
+from datetime import datetime
 
 TICKETS_URL = 'https://www.realmadrid.com/es-ES/futbol/partidos/entradas/real-madrid-barcelona-26-10-2025'
 
@@ -54,10 +55,10 @@ if __name__ == "__main__":
         missing_labels = content_checker.check_content()
 
         if len(missing_labels) > 0:
-            print("TICKETING CHANGED - Labels:", ticketing_info)
+            print("TICKETING CHANGED - Labels:", missing_labels)
 
             # TODO: Implement the logic to send a notification or alert
             exit(1)
 
-        print("OK")
+        print(f"[{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}] OK")
         time.sleep(30) # Wait for 30 seconds before the next check
