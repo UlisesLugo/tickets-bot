@@ -9,33 +9,55 @@ KEY_LABELS = [
     'La información de zonas y precios de aforo general aún no está disponible'
 ]
 
-def check_ticketing_info(requests, url, labels):
-    response = requests.get(url)
+class ContentGetter:
+    def __init__(self, url):
+        self.url = url
 
-    # Set encoding to UTF-8 for Spanish accents
-    response.encoding = 'utf-8'
+    def get_content(self):
+        try:
+            response = requests.get(self.url)
+            response.raise_for_status()  # Raise an error for bad responses
+            response.encoding = 'utf-8' # Set encoding to UTF-8 for Spanish accents
+            return response.text
+        except requests.RequestException as e:
+            print(f"An error occurred while fetching the content: {e}")
+            return None
 
-    result = []
-    for i, label in enumerate(labels):
-        if label not in response.text:
-            result.append(i)
-    return result
+class ContentChecker:
+    def __init__(self, content, labels):
+        self.content = content
+        self.labels = labels
 
+    def check_content(self):
+        if self.content is None:
+            return []
 
-print("Checking for key labels in the response...")
+        missing_labels = []
+        for i, label in enumerate(self.labels):
+            if label not in self.content:
+                missing_labels.append(i)
+        return missing_labels
+    
+if __name__ == "__main__":
+    content_getter = ContentGetter(TICKETS_URL)
+    print("Ticketing server started")
 
-while True:
-    try:
+    while True:
+        content = content_getter.get_content()
 
-        ticketing_info = check_ticketing_info(requests, TICKETS_URL, KEY_LABELS)
+        if content is None:
+            print("Failed to retrieve content.")
+            time.sleep(30)  # Wait before retrying
+            continue
 
-        if not ticketing_info:
-            print("All key labels found.")
-        else:
+        content_checker = ContentChecker(content, KEY_LABELS)
+        missing_labels = content_checker.check_content()
+
+        if len(missing_labels) > 0:
             print("TICKETING CHANGED - Labels:", ticketing_info)
-        
-        time.sleep(30)  # Wait for 30 seconds before the next check
 
-    except requests.RequestException as e:
-        print(f"An error occurred: {e}")
-        break
+            # TODO: Implement the logic to send a notification or alert
+            exit(1)
+
+        print("OK")
+        time.sleep(30) # Wait for 30 seconds before the next check
