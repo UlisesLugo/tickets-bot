@@ -9,6 +9,9 @@ import SwiftUI
 import AudioToolbox
 
 struct ContentView: View {
+    @State private var selectedHours = 0
+    @State private var selectedMinutes = 0
+    @State private var selectedSeconds = 0
     @State private var timeRemaining: TimeInterval = 0
     @State private var timer: Timer?
     @State private var isTimerRunning = false
@@ -19,13 +22,34 @@ struct ContentView: View {
                 .font(.largeTitle)
                 .padding()
             
-            DatePicker("Set Timer", selection: Binding(get: {
-                Date(timeIntervalSinceReferenceDate: self.timeRemaining)
-            }, set: {
-                self.timeRemaining = $0.timeIntervalSinceReferenceDate
-            }), displayedComponents: .hourAndMinute)
-            .labelsHidden()
-            .datePickerStyle(WheelDatePickerStyle())
+            HStack {
+                Picker("Hours", selection: $selectedHours) {
+                    ForEach(0..<24) {
+                        Text("\($0)h")
+                    }
+                }
+                .pickerStyle(WheelPickerStyle())
+                .frame(width: 100)
+                .clipped()
+                
+                Picker("Minutes", selection: $selectedMinutes) {
+                    ForEach(0..<60) {
+                        Text("\($0)m")
+                    }
+                }
+                .pickerStyle(WheelPickerStyle())
+                .frame(width: 100)
+                .clipped()
+                
+                Picker("Seconds", selection: $selectedSeconds) {
+                    ForEach(0..<60) {
+                        Text("\($0)s")
+                    }
+                }
+                .pickerStyle(WheelPickerStyle())
+                .frame(width: 100)
+                .clipped()
+            }
             
             HStack {
                 Button(action: {
@@ -64,6 +88,7 @@ struct ContentView: View {
     }
     
     private func startTimer() {
+        timeRemaining = TimeInterval(selectedHours * 3600 + selectedMinutes * 60 + selectedSeconds)
         isTimerRunning = true
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             if self.timeRemaining > 0 {
@@ -91,4 +116,3 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
-
