@@ -1,0 +1,15 @@
+# fly.toml app configuration file generated for tickets-bot on 2025-08-03T16:37:38Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'tickets-bot'
+primary_region = 'gdl'
+
+[build]
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 256
