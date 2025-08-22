@@ -5,11 +5,15 @@ from datetime import datetime
 from dotenv import load_dotenv
 import os
 
-TICKETS_URL = 'https://www.realmadrid.com/es-ES/futbol/partidos/entradas/real-madrid-barcelona-26-10-2025'
+TICKETS_URLS = [
+    'https://www.realmadrid.com/es-ES/futbol/partidos/entradas/real-madrid-mallorca-30-08-2025',
+    'https://www.realmadrid.com/es-ES/futbol/partidos/entradas/real-madrid-espanyol-21-09-2025',
+    'https://www.realmadrid.com/es-ES/futbol/partidos/entradas/real-madrid-villarreal-05-10-2025',
+    'https://www.realmadrid.com/es-ES/futbol/partidos/entradas/real-madrid-barcelona-26-10-2025',
+]
 
 KEY_LABELS = [
-    'Próximamente a la venta',
-    'La información de zonas y precios de aforo general aún no está disponible'
+    'Próximamente a la venta'
 ]
 
 class ContentGetter:
@@ -67,10 +71,14 @@ if __name__ == "__main__":
         print("Error: API_KEY is not set in the environment variables.")
         exit(1)
 
-    content_getter = ContentGetter(requests, TICKETS_URL)
     notification_sender = NotificationSender(requests, api_key)
+    url_index = 0
 
     while True:
+        if url_index >= len(TICKETS_URLS):
+            exit(1)
+
+        content_getter = ContentGetter(requests, TICKETS_URLS[url_index])
         content = content_getter.get_content()
 
         if content is None:
@@ -85,7 +93,10 @@ if __name__ == "__main__":
             print("TICKETING CHANGED - Labels:", missing_labels)
 
             notification_sender.send_notification()
-            exit(1)
+            time.sleep(300)
+            notification_sender.send_notification()
 
-        print(f"[{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}] OK")
+            url_index += 1
+
+        print(f"[{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}] OK [{url_index}]")
         time.sleep(30) # Wait for 30 seconds before the next check
