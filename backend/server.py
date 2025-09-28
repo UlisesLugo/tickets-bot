@@ -7,8 +7,6 @@ import os
 
 TICKETS_URLS = [
     'https://www.realmadrid.com/es-ES/futbol/partidos/entradas/real-madrid-mallorca-30-08-2025',
-    'https://www.realmadrid.com/es-ES/futbol/partidos/entradas/real-madrid-espanyol-21-09-2025',
-    'https://www.realmadrid.com/es-ES/futbol/partidos/entradas/real-madrid-villarreal-05-10-2025',
     'https://www.realmadrid.com/es-ES/futbol/partidos/entradas/real-madrid-barcelona-26-10-2025',
 ]
 
